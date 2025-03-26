@@ -1,0 +1,18 @@
+RAG Chatbot Project: AI-Powered Functional Programming Assistant
+Copyright (c) 2025 ErikMPZuhlke
+
+This project incorporates code examples and learning materials from:
+
+LaYumba Functional Programming in C# 
+Copyright (c) 2016 Enrico Buonanno
+Repository: https://github.com/la-yumba/functional-csharp-code
+License: MIT License
+
+The LaYumba codebase is used as educational material for demonstrating 
+functional programming concepts through AI-powered analysis. The original 
+LaYumba code is included in this repository under its original MIT license 
+terms for educational and analysis purposes.
+
+All original code developed for this RAG chatbot project (including the 
+backend API, frontend interface, ingestion pipeline, and documentation) 
+is licensed under the MIT License as specified in the LICENSE file.

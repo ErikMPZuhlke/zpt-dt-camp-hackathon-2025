@@ -1,0 +1,25 @@
+# Backend Dependencies - FastAPI + RAG Engine
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+
+# AI and ML packages
+sentence-transformers>=3.4.0
+langchain>=0.3.20
+langchain-chroma>=0.2.6
+langchain-community>=0.3.20
+langchain-huggingface>=0.3.1
+chromadb>=1.0.20
+ollama>=0.4.7
+
+# Data processing
+numpy>=2.2.0
+pandas>=2.2.0
+scikit-learn>=1.6.0
+
+# Document processing
+unstructured>=0.17.0
+python-magic>=0.4.27
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.32.0

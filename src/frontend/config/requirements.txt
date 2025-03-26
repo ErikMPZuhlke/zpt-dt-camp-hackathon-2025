@@ -1,0 +1,6 @@
+# Frontend Dependencies - Streamlit UI (Minimal)
+streamlit>=1.43.0
+
+# Basic utilities
+requests>=2.32.0
+python-dotenv>=1.0.0

@@ -1,0 +1,83 @@
+# Backend Debug Dockerfile - Optimized for heavy ML dependencies caching
+FROM python:3.12-slim AS base
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies in a single layer with cleanup
+# This layer will be cached unless system packages change
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    vim \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Dependencies stage - split heavy and light dependencies for better caching
+FROM base AS dependencies
+
+# Copy ONLY requirements first (changes less frequently than code)
+COPY config/requirements.txt ./requirements.txt
+
+# Upgrade pip first (cached independently)
+RUN pip install --no-cache-dir --upgrade pip
+
+# Install heavy ML/AI dependencies first (these rarely change, so they'll be cached)
+# Split into logical groups for better layer caching
+RUN pip install --no-cache-dir \
+    sentence-transformers>=3.4.0 \
+    langchain>=0.3.20 \
+    langchain-chroma>=0.2.6 \
+    langchain-community>=0.3.20 \
+    langchain-huggingface>=0.3.1 \
+    chromadb>=1.0.20
+
+# Install remaining heavy dependencies
+RUN pip install --no-cache-dir \
+    numpy>=2.2.0 \
+    pandas>=2.2.0 \
+    scikit-learn>=1.6.0 \
+    unstructured>=0.17.0
+
+# Install lighter, more frequently updated dependencies
+RUN pip install --no-cache-dir \
+    fastapi>=0.115.0 \
+    uvicorn[standard]>=0.34.0 \
+    ollama>=0.4.7 \
+    python-dotenv>=1.0.0 \
+    requests>=2.32.0
+
+# Install debugpy separately (for easy version changes)
+RUN pip install --no-cache-dir debugpy==1.8.0
+
+# Configure debugpy (cached unless debugpy changes)
+RUN python -c "import debugpy; debugpy.configure(python='/usr/local/bin/python')" || true
+
+# Application stage - copy code last (changes most frequently)
+FROM dependencies AS application
+
+# Set environment variables to suppress debugger warnings
+ENV PYDEVD_DISABLE_FILE_VALIDATION=1
+ENV PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT=0
+ENV DEBUGPY_LOG_DIR=/tmp/debugpy-logs
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Create user first (cached unless user setup changes)
+RUN useradd --create-home --shell /bin/bash app
+
+# Copy source code LAST (this layer rebuilds when code changes)
+COPY . .
+
+# Set ownership after copying (only rebuilds when code changes)
+RUN chown -R app:app /app
+
+# Don't switch to non-root user in debug mode to avoid permission issues
+# USER app
+
+# Expose application port (VS Code will handle debug port automatically)
+EXPOSE 8000
+
+# Simple command that VS Code will override for debugging
+CMD ["python", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

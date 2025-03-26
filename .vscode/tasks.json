@@ -1,0 +1,83 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "docker-compose: up debug",
+            "command": "docker-compose",
+            "args": [
+                "-f", "docker-compose.yml",
+                "-f", "docker-compose.debug.yml",
+                "up", "-d", "--build"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "docker-compose: down debug",
+            "command": "docker-compose",
+            "args": [
+                "-f", "docker-compose.yml",
+                "-f", "docker-compose.debug.yml",
+                "down"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "docker-compose: logs",
+            "command": "docker-compose",
+            "args": [
+                "-f", "docker-compose.yml",
+                "-f", "docker-compose.debug.yml",
+                "logs", "-f"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "docker: cleanup containers",
+            "command": "docker",
+            "args": [
+                "container", "prune", "-f"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}

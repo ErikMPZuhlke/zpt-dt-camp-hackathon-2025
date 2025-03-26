@@ -1,0 +1,8 @@
+# Debugpy configuration
+# Exclude frontend files from debugging path resolution
+exclude_patterns = [
+    "*/frontend/*",
+    "*/data/*", 
+    "*/docs/*",
+    "*/scripts/*"
+]

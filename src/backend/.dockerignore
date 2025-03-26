@@ -1,0 +1,98 @@
+# Backend .dockerignore - Optimized for build performance
+# Exclude files that shouldn't be in Docker build context
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Docker files (avoid recursion)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Documentation and markdown
+README.md
+*.md
+docs/
+CHANGELOG*
+LICENSE*
+
+# Test files and coverage
+tests/
+*_test.py
+test_*.py
+.pytest_cache
+.coverage
+.mypy_cache
+.tox/
+.nox/
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+*.temp
+.cache/
+
+# Data files (exclude large data)
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Other project directories not needed in backend container
+../frontend/
+../scripts/
+../docs/
+.debugpyrc

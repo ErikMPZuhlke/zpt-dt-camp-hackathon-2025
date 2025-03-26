@@ -1,0 +1,42 @@
+# Debug override for docker-compose.yml
+# Use: docker-compose -f docker-compose.yml -f docker-compose.debug.yml up
+services:
+  # Backend with debugging enabled
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile.debug
+    volumes:
+      # Mount source code for live reload
+      - ./src/backend:/app
+      - /app/__pycache__  # Exclude cache directory
+    ports:
+      - "8000:8000"
+      - "5678:5678"  # Debug port for backend
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - DEBUG=1
+      - OLLAMA_URL=http://ollama:11434
+    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    
+  # Frontend with debugging enabled  
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile.debug
+    volumes:
+      # Mount source code for live reload
+      - ./src/frontend:/app
+      - /app/__pycache__  # Exclude cache directory
+    ports:
+      - "8501:8501"
+      - "5679:5679"  # Debug port for frontend
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - DEBUG=1
+      - API_URL=http://backend:8000
+    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5679", "--wait-for-client", "-m", "streamlit", "run", "ui/streamlit_app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]

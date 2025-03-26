@@ -1,0 +1,55 @@
+# Frontend Debug Dockerfile - Optimized for caching
+FROM python:3.12-slim AS base
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    vim \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Dependencies stage - separated for better caching
+FROM base AS dependencies
+
+# Copy ONLY requirements first
+COPY config/requirements.txt ./requirements.txt
+
+# Install Python dependencies in separate steps for better caching
+RUN pip install --no-cache-dir --upgrade pip
+
+# Install streamlit and dependencies (cached unless requirements.txt changes)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install debugpy separately (for easy version changes)
+RUN pip install --no-cache-dir debugpy==1.8.0
+
+# Configure debugpy
+RUN python -c "import debugpy; debugpy.configure(python='/usr/local/bin/python')" || true
+
+# Application stage - copy code last
+FROM dependencies AS application
+
+# Set environment variables to suppress debugger warnings
+ENV PYDEVD_DISABLE_FILE_VALIDATION=1
+ENV PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT=0
+
+# Create user first
+RUN useradd --create-home --shell /bin/bash app
+
+# Copy source code LAST (this layer rebuilds when code changes)
+COPY . .
+
+# Set ownership after copying
+RUN chown -R app:app /app
+
+# Don't switch to non-root user in debug mode
+# USER app
+
+# Expose application port (VS Code will handle debug port)
+EXPOSE 8501
+
+# Simple command that VS Code will override for debugging
+CMD ["python", "-m", "streamlit", "run", "ui/streamlit_app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
