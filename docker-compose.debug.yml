@@ -1,6 +1,15 @@
 # Debug override for docker-compose.yml
 # Use: docker-compose -f docker-compose.yml -f docker-compose.debug.yml up
 services:
+  # Ollama with GPU support (inherits base config, ensures GPU support in debug mode)
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
   # Backend with debugging enabled
   backend:
     build:
