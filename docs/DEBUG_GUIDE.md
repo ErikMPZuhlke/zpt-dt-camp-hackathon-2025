@@ -95,7 +95,52 @@ frontend/Dockerfile.debug   # Frontend with debugpy
 - **Features**: Compound configuration, coordinated startup/shutdown
 - **Use Case**: End-to-end debugging across services
 
-## 🔄 Development Workflow
+## � GPU Debugging Support
+
+### GPU-Accelerated Debug Containers
+The debug configuration supports **NVIDIA GPU acceleration** for both services:
+
+```yaml
+# docker-compose.debug.yml includes GPU support
+services:
+  backend:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+```
+
+### GPU Debug Verification
+```bash
+# Check GPU access in debug containers
+docker exec rag_backend python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
+
+# Monitor GPU usage during debugging
+nvidia-smi --loop=2
+
+# Debug GPU memory usage
+docker exec rag_backend python -c "import torch; print(f'GPU memory: {torch.cuda.memory_summary()}')"
+```
+
+### Performance Debugging Tips
+1. **Model Loading**: First debug session may take 50+ seconds while model loads to GPU
+2. **Subsequent Sessions**: Should respond in 10-15 seconds once model is warm
+3. **Memory Issues**: Use `nvidia-smi` to monitor VRAM usage during debugging
+4. **Performance Comparison**: Set breakpoints to measure GPU vs CPU execution times
+
+## �🔄 Development Workflow
 
 ### Making Changes During Debug Sessions
 

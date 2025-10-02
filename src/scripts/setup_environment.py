@@ -4,17 +4,18 @@
 Ensures Docker-based RAG Chatbot deployment is working correctly!
 
 This script validates that the RAG Chatbot Docker deployment is functioning
-properly by running a 9-step validation process:
+properly by running a 10-step validation process:
 
 1. Check system requirements (Python, Docker, Docker Compose)
-2. Verify directory structure (updated for src/ organization)
-3. Clean up previous deployments
-4. Build Docker containers (production configuration)
-5. Start Docker services (models auto-downloaded by Docker)
-6. Wait for services to be ready
-7. Test backend API functionality 
-8. Test frontend accessibility
-9. Ingest C# codebase into vector database
+2. Install Python dependencies (requests, docker, GitPython, psutil, pyyaml, urllib3)
+3. Verify directory structure (updated for src/ organization)
+4. Clean up previous deployments
+5. Build Docker containers (production configuration)
+6. Start Docker services (models auto-downloaded by Docker)
+7. Wait for services to be ready
+8. Test backend API functionality 
+9. Test frontend accessibility
+10. Ingest C# codebase into vector database
 
 The modular design allows for easy testing and maintenance of individual components.
 Models (llama3.2:3b) are automatically downloaded during Docker startup, and 

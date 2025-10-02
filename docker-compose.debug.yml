@@ -1,11 +1,27 @@
 # Debug override for docker-compose.yml
 # Use: docker-compose -f docker-compose.yml -f docker-compose.debug.yml up
 services:
-  # Backend with debugging enabled
+  # Ollama with GPU support (inherits base config, ensures GPU support in debug mode)
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  # Backend with debugging and GPU support enabled
   backend:
     build:
       context: ./src/backend
       dockerfile: Dockerfile.debug
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     volumes:
       # Mount source code for live reload
       - ./src/backend:/app
@@ -19,6 +35,8 @@ services:
       - PYTHONUNBUFFERED=1
       - DEBUG=1
       - OLLAMA_URL=http://ollama:11434
+      - CUDA_VISIBLE_DEVICES=0  # Specify GPU access
+      - TORCH_CUDA_ARCH_LIST=6.0;6.1;7.0;7.5;8.0;8.6;9.0  # CUDA compatibility
     command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
     
   # Frontend with debugging enabled  

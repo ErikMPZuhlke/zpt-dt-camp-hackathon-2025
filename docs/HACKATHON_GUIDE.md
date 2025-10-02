@@ -14,15 +14,19 @@
 > **Setup Instructions**: See [README.md](../README.md) for detailed setup and [ARCHITECTURE.md](ARCHITECTURE.md) for technical implementation details.
 
 ```bash
-# One-command deployment validation
-python scripts/setup_environment.py --verbose
+# Automated deployment with dependency installation
+python src/scripts/setup_environment.py --verbose
+
+# Alternative: Manual Docker deployment
+docker-compose up -d --build
 ```
 
 **Verify Your Environment:**
 - 🌐 **Frontend**: http://localhost:8501 (Main development interface)  
 - 🔧 **Backend API**: http://localhost:8000/docs (API testing)
 - 🤖 **Ollama**: http://localhost:11434/api/tags (LLM service)
-- ✅ **Status**: All services reporting ready (9/9 validation steps passed)
+- ✅ **Status**: All services reporting ready (10/10 validation steps passed)
+- 🚀 **GPU**: Response times 10-15 seconds (vs 60+ seconds CPU-only)
 
 ---
 

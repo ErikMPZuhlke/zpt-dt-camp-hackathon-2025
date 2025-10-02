@@ -17,6 +17,7 @@ from .state_machine import ValidationStateMachine
 
 # Import all concrete states
 from .system_requirements_state import SystemRequirementsState
+from .install_dependencies_state import InstallDependenciesState
 from .directory_structure_state import DirectoryStructureState
 from .cleanup_state import CleanupState
 from .build_containers_state import BuildContainersState
@@ -32,6 +33,7 @@ __all__ = [
     'ValidationContext',
     'ValidationStateMachine',
     'SystemRequirementsState',
+    'InstallDependenciesState',
     'DirectoryStructureState',
     'CleanupState',
     'BuildContainersState',

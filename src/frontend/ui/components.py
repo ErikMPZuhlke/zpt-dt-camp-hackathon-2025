@@ -77,6 +77,7 @@ class UIComponents:
                     for i, example in enumerate(examples[persona_key]):
                         if st.button(f"📝 {example}", key=f"example_{i}"):
                             st.session_state.user_question = example
+                            st.session_state.auto_submit = True  # Flag to auto-submit
                             st.rerun()
             else:
                 st.warning("Could not load example queries from API")
@@ -101,6 +102,7 @@ class UIComponents:
             for i, example in enumerate(examples):
                 if st.button(f"📝 {example}", key=f"static_example_{i}"):
                     st.session_state.user_question = example
+                    st.session_state.auto_submit = True  # Flag to auto-submit
                     st.rerun()
     
     @staticmethod

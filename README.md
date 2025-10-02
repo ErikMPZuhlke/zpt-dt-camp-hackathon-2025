@@ -22,26 +22,31 @@ Transform how developers learn functional programming by providing:
 
 ### Prerequisites
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Python 3.8+ (for setup validation)
+- Python 3.8+ (for setup validation and dependency auto-installation)
+- **Optional**: NVIDIA GPU with 3GB+ VRAM for 10x performance boost
+  - **With GPU**: 10-15 second responses
+  - **CPU Only**: 60+ second responses
+  - **Auto-detection**: System automatically uses GPU if available
 
 ### Automated Deployment
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd rag_chatbot_project
+git clone https://github.com/ErikMPZuhlke/zpt-dt-camp-hackathon-2025.git
+cd zpt-dt-camp-hackathon-2025
 
-# Run the comprehensive setup validation
-python scripts/setup_environment.py --verbose
+# Run the comprehensive setup validation with dependency auto-installation
+python src/scripts/setup_environment.py --verbose
 ```
 
 **This single command will:**
 - ✅ Validate system requirements (Docker, Python, Docker Compose)
-- ✅ Build optimized Docker containers with service-specific dependencies
-- ✅ Start all services (Ollama, Backend, Frontend) in correct order
-- ✅ Download and configure local LLM (llama3.2:3b)
-- ✅ Process LaYumba codebase into searchable knowledge base
-- ✅ Validate complete system functionality with health checks
-- ✅ Provide access URLs and next steps
+- ✅ **Auto-install Python dependencies** (docker, GitPython, psutil, pyyaml, etc.)
+- ✅ Build **GPU-accelerated** Docker containers with optimized dependencies
+- ✅ Start all services with **NVIDIA GPU support** (Ollama, Backend, Frontend)
+- ✅ Download and configure local LLM (llama3.2:3b) with **24-hour keep-alive**
+- ✅ Process LaYumba codebase into searchable knowledge base (**478 chunks**)
+- ✅ Validate complete system functionality with **10-step health checks**
+- ✅ Provide access URLs and **performance metrics**
 
 ### Alternative Quick Start
 ```bash
@@ -71,10 +76,11 @@ docker-compose up -d --build
 
 ### 🏗️ System Architecture
 - **🐳 Optimized Docker**: Multi-stage builds with efficient layer caching
-- **🤖 Local LLM**: Ollama integration with automatic model management
+- **🚀 GPU Acceleration**: NVIDIA GPU support for 10x faster inference (10-15s vs 60+ seconds)
+- **🤖 Local LLM**: Ollama integration with 24-hour model keep-alive
 - **📊 Vector Database**: ChromaDB for efficient semantic code search
-- **⚡ FastAPI Backend**: High-performance API with health monitoring
-- **🎨 Streamlit Frontend**: Interactive web interface with persona selection
+- **⚡ FastAPI Backend**: High-performance API with GPU-accelerated embeddings
+- **🎨 Streamlit Frontend**: Interactive web interface with debug mode toggle
 - **🔧 Development Tools**: VS Code debugging, hot reload, comprehensive validation
 
 ---
@@ -123,21 +129,25 @@ The project analyzes the **LaYumba Functional Programming in C#** repository, wh
 ### Health Check Results
 The setup script performs comprehensive validation:
 
-**✅ 8-Step Validation Process:**
-1. System requirements (Python, Docker, Docker Compose)
-2. Directory structure verification  
-3. Previous deployment cleanup
-4. Optimized container builds
-5. Service startup coordination
-6. Health check validation
-7. API functionality testing
-8. Frontend accessibility verification
+**✅ 10-Step Validation Process:**
+1. **System requirements** (Python, Docker, Docker Compose)
+2. **Install Python dependencies** (automatic pip installation)
+3. **Directory structure** verification  
+4. **Previous deployment cleanup**
+5. **GPU-accelerated container builds**
+6. **Service startup** with GPU coordination
+7. **Wait for services** readiness
+8. **Backend API functionality** testing
+9. **Frontend accessibility** verification
+10. **Codebase ingestion** (222 files → 478 chunks)
 
 ### Performance Metrics
 - **Frontend Build**: ~29 seconds (minimal dependencies)
-- **Backend Build**: ~6 minutes (cached AI/ML dependencies)
+- **Backend Build**: ~6 minutes (cached AI/ML dependencies with GPU support)
 - **Service Ready**: <2 minutes for complete stack
-- **Success Rate**: 7/8 steps typically pass (health check may warn on first run)
+- **GPU Model Loading**: ~50-60 seconds (first request only)
+- **Query Response Time**: **10-15 seconds** (with GPU acceleration vs 60+ seconds CPU)
+- **Success Rate**: 10/10 steps typically pass on supported hardware
 
 ---
 
@@ -188,28 +198,29 @@ docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build
 ## 📁 Project Structure
 
 ```
-rag_chatbot_project/
+zpt-dt-camp-hackathon-2025/
 ├── 📄 README.md                    # Project overview and setup (this file)
-├── 🐳 docker-compose.yml           # Production container orchestration
+├── 🐳 docker-compose.yml           # Production container orchestration with GPU
 ├── 🐳 docker-compose.debug.yml     # Development/debug configuration
 ├── 📁 src/                         # Application source code
-│   ├── 📁 backend/                 # FastAPI microservice
+│   ├── 📁 backend/                 # FastAPI microservice with GPU support
 │   │   ├── 📁 api/                 # REST API layer
 │   │   ├── 📁 chat/                # RAG engine and AI personas
 │   │   ├── 📁 core/                # Configuration and models
 │   │   └── 📁 ingestion/           # Code processing and vector DB
 │   ├── 📁 frontend/                # Streamlit microservice
-│   │   └── 📁 ui/                  # Web interface components
+│   │   └── 📁 ui/                  # Web interface with debug mode
 │   └── 📁 scripts/                 # Deployment and validation
-│       ├── setup_environment.py    # Comprehensive setup validation
-│       └── 📁 validation_states/   # Modular validation framework
+│       ├── setup_environment.py    # 10-step validation with dependency install
+│       └── 📁 validation_states/   # State pattern validation framework
 ├── 📁 data/                        # Persistent data storage
 │   ├── 📁 vector_db/               # ChromaDB vector database
-│   └── 📁 codebase/                # LaYumba functional C# source
+│   └── 📁 codebase/                # LaYumba functional C# source (222 files)
 └── 📁 docs/                        # Documentation
     ├── ARCHITECTURE.md              # Technical architecture and patterns
     ├── HACKATHON_GUIDE.md           # Development and challenge guide
-    └── DEBUG_GUIDE.md               # Advanced debugging techniques
+    ├── DEBUG_GUIDE.md               # Advanced debugging techniques
+    └── GPU_SETUP.md                 # GPU acceleration setup guide
 ```
 
 ---
@@ -220,10 +231,10 @@ rag_chatbot_project/
 
 **Environment Setup**
 ```bash
-# Complete environment validation
-python scripts/setup_environment.py --verbose
+# Complete environment validation with dependency auto-install
+python src/scripts/setup_environment.py --verbose
 
-# Manual Docker restart
+# Manual Docker restart with GPU support
 docker-compose down && docker-compose up -d --build
 ```
 
@@ -243,9 +254,11 @@ docker-compose logs ollama
 - Modify `docker-compose.yml` if ports are in use
 
 **Performance Issues**
-- Allow 2GB+ RAM for Ollama model
+- Allow 2GB+ RAM for Ollama model (3GB+ VRAM for GPU acceleration)
 - Frontend build: ~29 seconds, Backend build: ~6 minutes
 - Use `--verbose` flag to monitor build progress
+- **GPU Setup**: See [docs/GPU_SETUP.md](docs/GPU_SETUP.md) for NVIDIA GPU configuration
+- **Slow Responses**: First request takes 50-60s (model loading), subsequent: 10-15s
 
 ---
 
@@ -312,11 +325,12 @@ Both licenses are compatible and allow free use, modification, and distribution 
 
 Ready to explore functional programming through AI-guided learning?
 
-1. **Clone**: `git clone <repository-url>`
-2. **Setup**: `python scripts/setup_environment.py --verbose`
+1. **Clone**: `git clone https://github.com/ErikMPZuhlke/zpt-dt-camp-hackathon-2025.git`
+2. **Setup**: `python src/scripts/setup_environment.py --verbose`
 3. **Access**: http://localhost:8501
-4. **Learn**: Start with "Explain the Option type" in Domain Expert mode
+4. **Learn**: Start with "Explain the Option type" in Domain Expert mode (10-15s response)
 5. **Explore**: Try architectural analysis in Software Architect mode
+6. **Debug**: Toggle Debug Mode to see performance metrics
 
 **For detailed technical information**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)  
 **For development workflow**: See [docs/HACKATHON_GUIDE.md](docs/HACKATHON_GUIDE.md)  

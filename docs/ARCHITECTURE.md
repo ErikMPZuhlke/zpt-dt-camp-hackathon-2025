@@ -97,7 +97,20 @@ src/
 
 ### 1. State Pattern - Validation Orchestration
 
-The environment validation system implements the **Gang of Four State Pattern** for managing complex deployment workflows:
+The environment validation system implements the **Gang of Four State Pattern** for managing complex deployment workflows with 10 automated validation steps:
+
+1. **System Requirements** - Python, Docker, Docker Compose availability
+2. **Install Dependencies** - Automatic Python package installation (docker, GitPython, psutil, pyyaml, etc.)
+3. **Directory Structure** - Project layout verification
+4. **Cleanup** - Previous deployment cleanup
+5. **Build Containers** - Docker image building with GPU support
+6. **Start Services** - Service orchestration with GPU acceleration
+7. **Wait for Services** - Health check polling
+8. **Test Backend** - API functionality validation
+9. **Test Frontend** - UI accessibility verification
+10. **Ingest Codebase** - Vector database population
+
+The validation process is fully automated and handles fresh machine deployments:
 
 ```mermaid
 graph LR
@@ -108,6 +121,7 @@ graph LR
         Context --> Base
         
         System[SystemRequirementsState] --> Base
+        Dependencies[InstallDependenciesState] --> Base
         Directory[DirectoryStructureState] --> Base
         Cleanup[CleanupState] --> Base
         Build[BuildContainersState] --> Base
@@ -290,6 +304,43 @@ ENV ENVIRONMENT=production
 | **Frontend** | 3 packages | ~29 seconds | Minimal deps |
 | **Backend** | 15+ packages | ~6 minutes | Layer caching |
 | **Ollama** | Pre-built image | Download only | No build |
+
+### GPU Acceleration Architecture
+
+The system supports **NVIDIA GPU acceleration** for both LLM inference and embedding generation:
+
+```yaml
+# docker-compose.yml GPU configuration
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h  # Keep model loaded in GPU memory
+  
+  backend:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - TORCH_CUDA_ARCH_LIST=6.0;6.1;7.0;7.5;8.0;8.6;9.0
+```
+
+**Performance Impact:**
+- **First request**: ~50-60 seconds (model loading + inference)
+- **Subsequent requests**: ~10-15 seconds (inference only)
+- **Model persistence**: 24-hour keep-alive prevents cold starts
+- **Embedding acceleration**: GPU-accelerated sentence transformers
 
 ### Infrastructure Patterns
 

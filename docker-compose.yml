@@ -9,6 +9,14 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_ORIGINS=*
+      - OLLAMA_KEEP_ALIVE=24h  # Keep model loaded in GPU memory for 24 hours
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     entrypoint: >
       /bin/bash -c "
         ollama serve &
@@ -36,8 +44,17 @@ services:
       - ./src/backend/.env
     environment:
       - OLLAMA_URL=http://ollama:11434
+      - CUDA_VISIBLE_DEVICES=0  # Specify GPU access
+      - TORCH_CUDA_ARCH_LIST=6.0;6.1;7.0;7.5;8.0;8.6;9.0  # CUDA compatibility
     volumes:
       - ./data:/app/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     depends_on:
       - ollama
     healthcheck:
