@@ -31,9 +31,10 @@ st.markdown(get_main_css(), unsafe_allow_html=True)
 def get_health_status():
     """Cached health check to avoid API calls on every rerun."""
     try:
-        response = requests.get(f"{Config.get_api_url()}/health/", timeout=Config.API_TIMEOUT)
+        response = requests.get(f"{Config.get_api_url()}/health/", timeout=10)  # Shorter timeout for health
         return response.status_code == 200 and response.json().get("ready", False)
-    except:
+    except Exception as e:
+        print(f"Health check failed: {e}")
         return False
 
 def main():
@@ -96,6 +97,7 @@ def main():
         if "last_submitted_question" not in st.session_state:
             st.session_state.last_submitted_question = ""
         
+        # Update session state if text area changed
         user_question = st.text_area(
             "Enter your question about the functional programming codebase:",
             value=st.session_state.user_question,
@@ -103,14 +105,28 @@ def main():
             key="question_input"
         )
         
-        # Submit button
-        if st.button("🚀 Ask Expert", type="primary"):
+        # Sync text area changes back to session state
+        if user_question != st.session_state.user_question:
+            st.session_state.user_question = user_question
+        
+        # Check for auto-submit flag from example queries
+        auto_submit = st.session_state.get("auto_submit", False)
+        if auto_submit:
+            st.session_state.auto_submit = False  # Reset flag
+            
+        # Submit button or auto-submit
+        if st.button("🚀 Ask Expert", type="primary") or auto_submit:
             if user_question.strip():
                 # Store the question that was submitted
                 st.session_state.last_submitted_question = user_question
                 
                 with st.spinner("🤔 Thinking..."):
                     try:
+                        import time
+                        start_time = time.time()
+                        if debug_mode:
+                            st.write(f"⏱️ Starting API request at {time.strftime('%H:%M:%S')}")
+                        
                         # Make API request
                         response = requests.get(
                             f"{API_URL}/query/",
@@ -121,11 +137,24 @@ def main():
                             timeout=120  # Use the longer timeout from Config
                         )
                         
+                        request_time = time.time() - start_time
+                        if debug_mode:
+                            st.write(f"⏱️ API request completed in {request_time:.2f}s")
+                        
                         if response.status_code == 200:
+                            parse_start = time.time()
                             response_data = response.json()
+                            parse_time = time.time() - parse_start
+                            if debug_mode:
+                                st.write(f"⏱️ JSON parsing took {parse_time:.3f}s")
+                            
                             # Store response in session state
                             st.session_state.last_response = response_data
-                            st.success("✅ Response received!")
+                            total_time = time.time() - start_time
+                            if debug_mode:
+                                st.success(f"✅ Response received! Total time: {total_time:.2f}s")
+                            else:
+                                st.success("✅ Response received!")
                         else:
                             st.error(f"API Error: {response.status_code}")
                             st.session_state.last_response = None

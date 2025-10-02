@@ -9,6 +9,7 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_ORIGINS=*
+      - OLLAMA_KEEP_ALIVE=24h  # Keep model loaded in GPU memory for 24 hours
     deploy:
       resources:
         reservations:
