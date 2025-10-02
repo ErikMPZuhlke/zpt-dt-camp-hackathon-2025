@@ -14,7 +14,7 @@ class SystemRequirementsState(ValidationState):
     """State for checking system requirements."""
     
     def execute(self, context: ValidationContext) -> ValidationState:
-        from .directory_structure_state import DirectoryStructureState
+        from .install_dependencies_state import InstallDependenciesState
         
         step_num, name = context.get_current_step_and_increment(self.get_step_name())
         StepPrinter.print_step(step_num, name)
@@ -22,10 +22,10 @@ class SystemRequirementsState(ValidationState):
         try:
             success, message = context.system_checker.check_requirements()
             context.add_result(step_num, name, success, message)
-            return DirectoryStructureState()
+            return InstallDependenciesState()
         except Exception as e:
             context.add_result(step_num, name, False, f"Error: {str(e)}")
-            return DirectoryStructureState()
+            return InstallDependenciesState()
     
     def get_step_name(self) -> str:
         return "System Requirements"
